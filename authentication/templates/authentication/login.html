@@ -1,0 +1,44 @@
+{% load static %}
+{% load crispy_forms_tags %}
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Sonnabod</title>
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <link rel="stylesheet" href="{% static 'bower_components/bootstrap/dist/css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'bower_components/font-awesome/css/font-awesome.min.css' %}">
+  <link rel="stylesheet" href="{% static 'bower_components/Ionicons/css/ionicons.min.css' %}">
+  <link rel="stylesheet" href="{% static 'dist/css/AdminLTE.min.css' %}">
+  <link rel="stylesheet" href="{% static 'dist/css/skins/skin-blue.min.css' %}">
+  <link rel="stylesheet" href="{% static 'font-face/stylesheet.css' %}">
+  <link rel="stylesheet" href="{% static 'dist/css/custom.css' %}">
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+</head>
+
+<body class="hold-transition login-page">
+    <div class="login-box">
+      <!-- /.login-logo -->
+      <div class="login-box-body">
+        <h3 style="margin: 0 0 20px;text-align:center">Sonnabod</h3>
+        <form method="post" novalidate>
+            {% csrf_token %}
+            {{ form|crispy }}
+          <div class="row">
+            <!-- /.col -->
+            <div class="col-xs-4">
+              <button type="submit" class="btn btn-primary btn-block btn-flat">Login</button>
+            </div>
+            <!-- /.col -->
+          </div>
+        </form>
+      </div>
+      <!-- /.login-box-body -->
+    </div>
+    <!-- /.login-box -->
+    </body>
+
+</html>

@@ -1,0 +1,35 @@
+<div class="la-font" style="font-size: 16px">
+    <h3 class="la-font" style="text-align:center;margin-top:0">Order</h3>
+    <p style="padding-left: 10px">ເລກທີ: {{ order.order_id }}</p>
+    <div style="display:flex;justify-content: space-between">
+        <p style="padding-left: 10px">ໂຕະ: {{ order.table.number }}</p>
+        <p>ວັນທີ: {{ order.created_at }}</p>
+    </div>
+    <table class="table">
+        <tr>
+            <th style="text-align:center;border-bottom:1px dotted #000;border-top:none!important" width="80%">
+                ເມນູ
+            </th>
+            <th style="text-align:center;border-bottom:1px dotted #000;border-top:none!important" width="10%">
+                ຈຳນວນ
+            </th>
+        </tr>
+        {% for detail in order.order_details %}
+        <tr>
+            <td style="text-align:center;border-bottom:1px dotted #000;border-top:none!important">
+                {{ detail.menu.name }}
+                {% if detail.has_item %}
+                    <br>
+                    ໝາຍເຫດ: 
+                    {% for item in detail.get_items %}
+                        {{ item.item }},&nbsp;
+                    {% endfor %}
+                {% endif %}
+            </td>
+            <td style="text-align:center;border-bottom:1px dotted #000;border-top:none!important">
+                {{ detail.qty }}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>

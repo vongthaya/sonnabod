@@ -1,0 +1,108 @@
+{% extends 'home/base.html' %}
+
+{% load humanize %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-12">
+        <div class="box box-primary la-font">
+            <div class="box-header with-border">
+                <h1 class="box-title la-font">ລາຍງານປະຈຳປີ</h1>
+            </div>
+            <div class="box-body">
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <label>ກະລຸນາໃສ່ຂໍ້ມູນປີ</label>
+                            <input type="number" name="year" id="year" class="form-control">
+                            {% if year_error %}
+                            <p style="color: red;">{{ year_error }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <button class="btn btn-primary" 
+                            style="margin-top: 10px;">ລາຍງານ</button>
+                        </div>
+                    </div>
+                </form>
+                {% if report_data.submit %}
+                <hr>
+                <button class="btn btn-primary" onclick="saveToPdf()">
+                    ບັນທຶກເປັນ PDF
+                </button>
+                <div id="report_data">
+                    <h3 class="la-font text-center"><strong>ລາຍງານປະຈຳປີ {{ report_data.date }}</strong></h3>
+                    <div style="font-size: 16px;" class="la-font">
+                        <p><strong>ຍອດລວມ: {{ report_data.total|intcomma }} ກີບ</strong> </p>
+                        <p><strong>ສ່ວນລຸດທັງໝົດ: {{ report_data.total_discount|intcomma }} ກີບ</strong> </p>
+                        {% for category, total in report_data.sum_total_with_category.items %}
+                            <p><strong>ຍອດລວມ ( {{ category }} - ບໍ່ລວມສ່ວນລຸດ ): {{ total|intcomma }} ກີບ</strong> </p>
+                        {% endfor %}
+                        <ul style="padding: 0;list-style: none;">
+                            <li><strong>ຊຳລະເງິນຜ່ານ:</strong></li>
+                            {% for payment_name, total in report_data.payments.items %}
+                            <li style="padding-left: 10px;margin: 10px 0;">
+                                <strong>{{ payment_name }}: {{ total|intcomma }} ກີບ</strong>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="table-responsive la-font" style="margin-top: 40px;">
+                        <h4 class="la-font">
+                            <strong>ລາຍການທີ່ຂາຍທັງໝົດ {{ report_data.receipt_details_count }} ລາຍການ</strong>
+                        </h4>
+                        <table class="table text-center table-striped">
+                            <thead>
+                                <tr>
+                                    <th width="10%">ລຳດັບ</th>
+                                    <th width="80%">ເມນູ</th>
+                                    <th width="10%">ຈຳນວນ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for menu, qty in report_data.receipt_details.items %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ menu }}</td>
+                                    <td>{{ qty }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block script %}
+<script>
+    function saveToPdf() {
+        const bodyElem = document.querySelector('body');
+        const oldHTML = bodyElem.innerHTML;
+        const newHTML = document.getElementById('report_data').innerHTML;
+        
+        bodyElem.innerHTML = newHTML;
+        window.print();
+        bodyElem.innerHTML = oldHTML;
+    }
+
+    function setCurrentYear() {
+        const yearElem = document.getElementById('year');
+        const dateObj = new Date;
+        yearElem.value = dateObj.getFullYear();
+    }
+
+    function run() {
+        setCurrentYear();
+    }
+
+    run();
+</script>
+{% endblock script %}

@@ -1,0 +1,228 @@
+{% extends 'home/base.html' %}
+
+{% load humanize %}
+
+{% block content %}
+<div class="row" id="vue_application">
+    <div class="col-lg-12">
+        <div class="box box-primary la-font">
+            <div class="box-header with-border">
+                <h1 class="box-title la-font">ແກ້ໄຂລາຍການຂາຍ</h1>
+            </div>
+            <div class="box-body">
+                <div class="row">
+                    <div class="col-lg-4">
+                        <div class="form-group">
+                            <label>ເລກລະຫັດ</label>
+                            <input type="text" class="form-control" value="{{ order.order_id }}" disabled>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="form-group">
+                            <label>ໂຕະ</label>
+                            <input type="text" class="form-control" value="{{ order.table.number }}" disabled>
+                        </div>
+                    </div>
+            
+                    <div class="col-lg-4">
+                        <div class="form-group">
+                            <label>ວັນທີ</label>
+                            <input type="text" class="form-control" value="{{ order.created_at|date:'Y/m/d' }}" disabled>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="form-group">
+                            <label>ສະຖານະ</label>
+                            <div>
+                                {% if order.status == True %}
+                                <button class="btn btn-success">ໄລ່ເງິນແລ້ວ</button>
+                                {% else %}
+                                <button class="btn btn-primary">ຍັງບໍ່ໄລ່ເງິນ</button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-lg-12 table-responsive">
+                        <h4 class="la-font text-center"><strong>ລາຍການ</strong></h4>
+                        <table class="table text-center">
+                            <tr>
+                                <th>ລຳດັບ</th>
+                                <th width="40%">ເມນູ</th>
+                                <th width="10%">ຈຳນວນ</th>
+                                <th>ລາຄາ (ກີບ)</th>
+                                <th>ລວມ (ກີບ)</th>
+                                <th width="10%">ສະຖານະ</th>
+                            </tr>
+                            {% for od in order.orderdetail_set.all %}
+                            {% if od.status == False %}
+                            <tr class="tr" style="background: #dd4b3957">
+                            {% else %}
+                            <tr class="tr">
+                            {% endif %}
+                                <td>
+                                    {{ forloop.counter }}
+                                    <input type="hidden" class="od_id" value="{{ od.id }}">
+                                </td>
+                                <td>{{ od.menu.name }}</td>
+                                <td>
+                                    <input type="number" class="form-control od_qty" value="{{ od.qty }}">
+                                </td>
+                                <td>
+                                    {{ od.price|intcomma }}
+                                </td>
+                                <td>
+                                    {{ od.amount|intcomma }}
+                                </td>
+                                <td>
+                                   <select class="form-control od_status">
+                                       {% if od.status == True %}
+                                       <option value="True" selected>ສຳເລັດ</option>
+                                       <option value="False">ຍົກເລີກ</option>
+                                       {% else %}
+                                       <option value="True">ສຳເລັດ</option>
+                                       <option value="False" selected>ຍົກເລີກ</option>
+                                       {% endif %}
+                                   </select>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </table>
+                        <hr>
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <h4 class="la-font"><strong>ລວມ. [[ subTotal|currency ]] ກີບ </strong> </h4>
+                                </div>
+                                <div class="form-group">
+                                    <label style="font-size: 18px;">ສ່ວນລຸດ</label>
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <select class="form-control" @change="calculateDiscount" v-model="discountType">
+                                                {% for dt in discount_type %}
+                                                <option value="{{ dt.short_name }}">{{ dt.description }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <input type="number" class="form-control" 
+                                            @input="calculateDiscount" v-model="discount" min="0">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <h4 class="la-font"><strong>ລາຄາທີ່ຕ້ອງຈ່າຍ. [[ total|currency ]] ກີບ </strong> </h4>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <h4 class="la-font"><strong>ຊຳລະເງິນຜ່ານ</strong></h4>
+                        <div style="padding: 0;list-style: none;font-weight: 600;margin: 20px 0 20px;">
+                            {% for payment in order.orderpayment_set.all %}
+                            <div class="row payment-box">
+                                <div class="col-lg-4">
+                                    <div class="form-group">
+                                        <label>{{ payment.payment }}</label>
+                                        <input type="hidden" class="payment_id" value="{{ payment.id }}">
+                                        <input type="number" class="payment_amount form-control" value="{{ payment.amount }}">
+                                    </div>
+                                </div>
+                                <div class="col-lg-2">
+                                    <div class="form-group">
+                                        <div>
+                                            <label for="">&nbsp;</label>
+                                        </div>
+                                        <button class="btn btn-success"><i class="fa fa-fw fa-plus"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        <button class="btn btn-primary" @click="updateOrderDetail">
+                            ບັນທຶກ
+                        </button>
+                        <a href="{% url 'orders' %}" class="btn btn-danger">
+                            ຍົກເລີກ
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block script %}
+<script>
+    const app = new Vue({
+        el: '#vue_application',
+        delimiters: ['[[', ']]'],
+        data: {
+            discountType: '{{ order.discount_type.short_name }}',
+            discount: '{{ order.discount }}',
+            subTotal: '{{ order.subtotal }}',
+            total: '{{ order.total }}',
+        },
+        methods: {
+            updateOrderDetail() {
+                const data = [];
+                const payments = [];
+                const trElems = [...document.querySelectorAll('.tr')];
+                const paymentElems = [...document.querySelectorAll('.payment-box')];
+
+                trElems.forEach(trElem => {
+                    const id = trElem.querySelector('.od_id').value;
+                    const qty = trElem.querySelector('.od_qty').value;
+                    const status = trElem.querySelector('.od_status').value;
+                    data.push({ id, qty, status });
+                });
+
+                paymentElems.forEach(paymentElem => {
+                    const id = paymentElem.querySelector('.payment_id').value;
+                    const amount = paymentElem.querySelector('.payment_amount').value;
+                    payments.push({ id, amount });
+                });
+
+                $.ajax({
+                    method: 'POST',
+                    url: '{% url "order_update" order.id %}',
+                    data: { order_detail: JSON.stringify(data), payments: JSON.stringify(payments) }
+                }).then(response => {
+                    if (response.status === 'ok') {
+                        location.href = '{% url "orders" %}';
+                    } else{
+                        alert('ເກີດຂໍ້ຜິດພາດ');
+                    }
+                });
+            },
+            calculateDiscount() {
+                // this.discount = 0;
+
+                switch(this.discountType) {
+                    case 'percent':
+                        let discountAmount = (this.discount * this.subTotal) / 100;
+                        this.total = this.subTotal - discountAmount;
+                        break;
+                    case 'cash':
+                        this.total = this.subTotal - this.discount;
+                        break;
+                    default:
+                        this.total = this.subTotal;
+                }
+
+            }
+        },
+        filters: {
+            currency(value) {
+                value = value * 1;
+                return value.toLocaleString();
+            }
+        },
+        mounted() {
+        }
+    });
+</script>
+{% endblock script %}

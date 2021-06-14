@@ -1,0 +1,132 @@
+{% extends 'home/base.html' %}
+
+{% load humanize %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-12">
+        <div class="box box-primary la-font">
+            <div class="box-header with-breceipt">
+                <h1 class="box-title la-font">ໃບບິນ</h1>
+                <div class="pull-right">
+                    <a href="{% url 'receipts' %}" class="btn btn-primary">
+                        ກັບຄືນ
+                    </a>
+                </div>
+            </div>
+            <div class="box-body">
+                <div class="row">
+                    <div class="col-lg-4">
+                        <div class="form-group">
+                            <label>ເລກທີ</label>
+                            <input type="text" class="form-control" value="{{ receipt.no }}" disabled>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="form-group">
+                            <label>ໂຕະ</label>
+                            <input type="text" class="form-control" value="{{ receipt.table.number }}" disabled>
+                        </div>
+                    </div>
+              
+                    <div class="col-lg-4">
+                        <div class="form-group">
+                            <label>ວັນທີ</label>
+                            <input type="text" class="form-control" value="{{ receipt.created_at|date:'d/m/Y' }}" disabled>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="form-group">
+                            <label>ເລກທີໃບອໍເດີ້</label>
+                            <input type="text" class="form-control" value="{{ receipt.order.order_id }}" disabled>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-4">
+                        <div class="form-group">
+                            <label>ສະຖານະ</label>
+                            <div>
+                                {% if receipt.status == 'new' %}
+                                <span class="badge bg-green">ບິນໃໝ່</span>
+                                {% else %}
+                                <span class="badge bg-red">ບິນເກົ່າ</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-lg-12 table-responsive">
+                        <h4 class="la-font text-center"><strong>ລາຍການ</strong></h3>
+                        <table class="table text-center">
+                            <tr>
+                                <th>ລຳດັບ</th>
+                                <th width="40%">ເມນູ</th>
+                                <th width="10%">ຈຳນວນ</th>
+                                <th>ລາຄາ (ກີບ)</th>
+                                <th>ລວມ (ກີບ)</th>
+                                <th width="10%">ສະຖານະ</th>
+                            </tr>
+                            {% for detail in receipt.details %}
+                            {% if detail.status == False %}
+                            <tr class="tr" style="background: #dd4b3957">
+                            {% else %}
+                            <tr class="tr">
+                            {% endif %}
+                                <td>
+                                    {{ forloop.counter }}
+                                </td>
+                                <td>{{ detail.menu.name }}</td>
+                                <td>
+                                    {{ detail.qty }}
+                                </td>
+                                <td>
+                                    {{ detail.price|intcomma }}
+                                </td>
+                                <td>
+                                    {{ detail.amount|intcomma }}
+                                </td>
+                                <td>
+                                    {% if detail.status %}
+                                    <span class="badge bg-green">ສຳເລັດ</span>
+                                    {% else %}
+                                    <span class="badge bg-red">ຍົກເລີກ</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </table>
+                        <hr>
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <div class="form-group">
+                                    <h3 class="la-font"><strong>ລວມ. {{ receipt.subtotal|intcomma }} ກີບ</strong></h3>
+                                </div>
+                                <div class="form-group">
+                                    <h3 class="la-font"><strong>ສ່ວນລຸດ. {{ receipt.get_discount|intcomma }} </strong></h3>
+                                </div>
+                                <div class="form-group">
+                                    <h3 class="la-font"><strong>ລາຄາທີ່ຕ້ອງຈ່າຍ. {{ receipt.total|intcomma }} ກີບ</strong></h3>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <h3 class="la-font">ຊຳລະເງິນຜ່ານ</h3>
+                        <div class="row">
+                            <div class="col-lg-4">
+                                {% for payment in receipt.payments %}
+                                <div class="form-group">
+                                    <h3 class="la-font"><strong>{{ payment.payment.name }}. {{ payment.amount|intcomma }} ກີບ</strong></h3>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

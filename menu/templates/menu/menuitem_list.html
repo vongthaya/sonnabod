@@ -1,0 +1,51 @@
+{% extends 'home/base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-12">
+        <div class="box box-primary la-font">
+            <div class="box-header with-border">
+                <h1 class="box-title la-font">ລາຍການຕົວເລືອກທັງໝົດ</h1>
+                <div class="pull-right">
+                    <a href="{% url 'menu_item_create' menu_id %}" class="btn btn-primary">ເພີ່ມຕົວເລືອກໃໝ່</a>
+                    <a href="{% url 'menu_all' %}" class="btn btn-default">ກັບຄືນ</a>
+                </div>
+            </div>
+            <div class="box-body table-responsive">
+                <table class="table text-center">
+                    <tr>
+                        <th>ລຳດັບ</th>
+                        <th>ເມນູ</th>
+                        <th>ຕົວເລືອກ</th>
+                        <th width="20%"></th>
+                    </tr>
+                    {% for item in menuitem_list %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ item.menu.name }}</td>
+                        <td>{{ item.name }}</td>
+                        <td>
+                            <a href="{% url 'menu_item_update' menu_id item.id %}" class="btn btn-warning">
+                                <i class="fa fa-fw fa-pencil"></i>
+                            </a>
+                            <a href="{% url 'menu_item_delete' menu_id item.id %}" onclick="return deleteObj()" class="btn btn-danger">
+                                <i class="fa fa-fw fa-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block script %}
+<script>
+    function deleteObj() {
+        if (confirm('ແນ່ໃຈບໍ່ວ່າຕ້ອງການລົບ?')) return true;
+        return false;
+    }
+</script>
+{% endblock script %}

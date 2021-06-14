@@ -1,0 +1,20 @@
+{% extends 'home/base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-12">
+        <div class="box box-primary la-font">
+            <div class="box-header with-border">
+                <h1 class="box-title la-font">ລົບເມນູ</h1>
+            </div>
+            <div class="box-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <p>ແນ່ໃຈບໍ່ວ່າຕ້ອງການລົບ "{{ object }}"?</p>
+                    <button class="btn btn-danger">ຢືນຢັນ</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

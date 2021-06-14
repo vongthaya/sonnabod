@@ -1,0 +1,108 @@
+{% extends 'home/base.html' %}
+
+{% load humanize %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-12">
+        <div class="box box-primary la-font">
+            <div class="box-header with-border">
+                <h1 class="box-title la-font">ໃບອໍເດີ້</h1>
+                <div class="pull-right">
+                    <a href="{% url 'orders' %}" class="btn btn-primary">
+                        ກັບຄືນ
+                    </a>
+                </div>
+            </div>
+            <div class="box-body">
+                <div class="row">
+                    <div class="col-lg-4">
+                        <div class="form-group">
+                            <label>ເລກທີ</label>
+                            <input type="text" class="form-control" value="{{ order.order_id }}" disabled>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="form-group">
+                            <label>ໂຕະ</label>
+                            <input type="text" class="form-control" value="{{ order.table.number }}" disabled>
+                        </div>
+                    </div>
+              
+                    <div class="col-lg-4">
+                        <div class="form-group">
+                            <label>ວັນທີ</label>
+                            <input type="text" class="form-control" value="{{ order.created_at|date:'Y/m/d' }}" disabled>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="form-group">
+                            <label>ສະຖານະ</label>
+                            <div>
+                                {% if order.status == True %}
+                                <button class="btn btn-success">ໄລ່ເງິນແລ້ວ</button>
+                                {% else %}
+                                <button class="btn btn-primary">ຍັງບໍ່ໄລ່ເງິນ</button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-lg-12 table-responsive">
+                        <h4 class="la-font text-center"><strong>ລາຍການ</strong></h3>
+                        <table class="table text-center">
+                            <tr>
+                                <th>ລຳດັບ</th>
+                                <th width="40%">ເມນູ</th>
+                                <th width="10%">ຈຳນວນ</th>
+                                <th>ລາຄາ (ກີບ)</th>
+                                <th>ລວມ (ກີບ)</th>
+                                <th width="10%">ສະຖານະ</th>
+                            </tr>
+                            {% for od in order.orderdetail_set.all %}
+                            {% if od.status == False %}
+                            <tr class="tr" style="background: #dd4b3957">
+                            {% else %}
+                            <tr class="tr">
+                            {% endif %}
+                                <td>
+                                    {{ forloop.counter }}
+                                    <input type="hidden" class="od_id" value="{{ od.id }}">
+                                </td>
+                                <td>{{ od.menu.name }}</td>
+                                <td>
+                                    {{ od.qty }}
+                                </td>
+                                <td>
+                                    {{ od.price|intcomma }}
+                                </td>
+                                <td>
+                                    {{ od.amount|intcomma }}
+                                </td>
+                                <td>
+                                    {% if od.status == True %}
+                                    <button class="btn btn-success">ສຳເລັດ</button>
+                                    {% else %}
+                                    <button class="btn btn-danger">ຍົກເລີກ</button>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </table>
+                        <hr>
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <div class="form-group">
+                                    <h3 class="la-font"><strong>ລວມ. {{ order.total|intcomma }} ກີບ</strong></h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

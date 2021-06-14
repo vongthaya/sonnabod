@@ -1,0 +1,39 @@
+{% extends 'home/base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-12">
+        <div class="box box-primary la-font">
+            <div class="box-header with-border">
+                <h1 class="box-title la-font">ລາຍການໝວດໝູ່ເມນູທັງໝົດ</h1>
+                <a href="{% url 'category_create' %}" class="btn btn-primary pull-right">ເພີ່ມໝວດໝູ່ເມນູໃໝ່</a>
+            </div>
+            <div class="box-body table-responsive">
+                <table class="table text-center">
+                    <tr>
+                        <th>ລຳດັບ</th>
+                        <th>ຊື່ໝວດໝູ່</th>
+                        <th>ໝວດໝູ່ຫລັກ</th>
+                        <th width="20%"></th>
+                    </tr>
+                    {% for category in category_list %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ category.name }}</td>
+                        <td>{{ category.parent }}</td>
+                        <td>
+                            <a href="{% url 'category_update' category.id %}" class="btn btn-warning">
+                                <i class="fa fa-fw fa-pencil"></i>
+                            </a>
+                            <a href="{% url 'category_delete' category.id %}" class="btn btn-danger">
+                                <i class="fa fa-fw fa-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
