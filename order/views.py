@@ -145,12 +145,23 @@ def order_create_action(req):
                 qty=elem['qty'],
             )
 
-        # create order detail item
+        order_detail.items = []
+
         for item in elem['items']:
-            OrderDetailItem.objects.create(
-                order_detail_id=order_detail.id,
-                item_id=item['id']
-            )
+            print(item)
+            order_detail.items.append(item)
+        #     OrderDetailItem.objects.create(
+        #         order_detail_id=order_detail.id,
+        #         item_id=item['id']
+        #     )
+            
+
+        # # create order detail item
+        # for item in elem['items']:
+        #     OrderDetailItem.objects.create(
+        #         order_detail_id=order_detail.id,
+        #         item_id=item['id']
+        #     )
 
         created_order_detail.append(order_detail)
 

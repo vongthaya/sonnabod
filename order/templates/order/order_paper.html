@@ -18,13 +18,11 @@
         <tr>
             <td style="text-align:center;border-bottom:1px dotted #000;border-top:none!important">
                 {{ detail.menu.name }}
-                {% if detail.has_item %}
-                    <br>
-                    ໝາຍເຫດ: 
-                    {% for item in detail.get_items %}
-                        {{ item.item }},&nbsp;
-                    {% endfor %}
-                {% endif %}
+                <br>
+                <strong>ໝາຍເຫດ:</strong>
+                {% for item in detail.items %}
+                    {{ item.name }},&nbsp;
+                {% endfor %}
             </td>
             <td style="text-align:center;border-bottom:1px dotted #000;border-top:none!important">
                 {{ detail.qty }}
